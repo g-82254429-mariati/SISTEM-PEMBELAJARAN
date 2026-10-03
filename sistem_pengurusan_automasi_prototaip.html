@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMART AUTOSYS — Sistem Pengurusan & Automasi</title>
+<style>
+:root{
+  --primary:#4f46e5; --primary2:#7c3aed; --bg:#f5f7fb; --card:#fff;
+  --text:#172033; --muted:#687386; --border:#e5e7eb; --success:#16a34a;
+  --warning:#d97706; --danger:#dc2626; --shadow:0 10px 30px rgba(15,23,42,.08);
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit} button{cursor:pointer;border:0}
+.app{display:flex;min-height:100vh}.sidebar{width:260px;background:#111827;color:white;padding:22px 16px;position:fixed;inset:0 auto 0 0;z-index:5}
+.brand{font-size:20px;font-weight:800;padding:8px 12px 24px}.brand small{display:block;color:#a5b4fc;font-size:11px;margin-top:4px}
+.nav button{width:100%;background:transparent;color:#cbd5e1;text-align:left;padding:12px 14px;border-radius:10px;margin:3px 0}
+.nav button:hover,.nav button.active{background:#312e81;color:#fff}.nav span{display:inline-block;width:26px}
+.main{margin-left:260px;width:calc(100% - 260px)}header{height:72px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:4}
+.header-title{font-weight:750}.clock{font-size:13px;color:var(--muted)}
+.content{padding:28px;max-width:1600px;margin:auto}.page{display:none}.page.active{display:block}
+h1{margin:0 0 6px;font-size:28px} h2{margin:0 0 15px;font-size:19px} .sub{color:var(--muted);margin-bottom:24px}
+.grid{display:grid;gap:18px}.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.two{grid-template-columns:1.4fr 1fr}.three{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.stat .label{color:var(--muted);font-size:13px}.stat .value{font-size:30px;font-weight:800;margin:7px 0}.stat .trend{font-size:12px;color:var(--success)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+input,select,textarea{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:#fff;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+.btn{padding:10px 14px;border-radius:10px;font-weight:700}.primary{background:var(--primary);color:#fff}.secondary{background:#eef2ff;color:#3730a3}.light{background:#f3f4f6;color:#374151}.danger{background:#fee2e2;color:#991b1b}.success{background:#dcfce7;color:#166534}
+.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px}table{width:100%;border-collapse:collapse;background:#fff}th,td{padding:12px 13px;border-bottom:1px solid var(--border);text-align:left;font-size:13px;white-space:nowrap}th{background:#f8fafc;color:#475569}tr:last-child td{border-bottom:0}
+.badge{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800}.b-green{background:#dcfce7;color:#166534}.b-yellow{background:#fef3c7;color:#92400e}.b-red{background:#fee2e2;color:#991b1b}.b-blue{background:#dbeafe;color:#1d4ed8}
+.bar{height:9px;background:#e5e7eb;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--primary2))}
+.workflow{display:flex;gap:10px;flex-wrap:wrap}.step{flex:1;min-width:150px;border:1px dashed #c7d2fe;background:#f8faff;border-radius:12px;padding:15px}.step b{display:block;margin-bottom:5px}
+.modal{display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:20;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;width:min(680px,100%);border-radius:18px;padding:24px;max-height:90vh;overflow:auto}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:750;color:#475569}
+.toast{position:fixed;right:22px;bottom:22px;background:#111827;color:white;padding:13px 16px;border-radius:10px;box-shadow:var(--shadow);display:none;z-index:30}
+.empty{text-align:center;padding:35px;color:var(--muted)}.activity{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}.dot{width:10px;height:10px;border-radius:50%;background:var(--primary);margin-top:5px}
+.kpi{font-size:12px;color:var(--muted)}.footer-note{font-size:11px;color:var(--muted);margin-top:14px}
+@media(max-width:900px){.sidebar{width:72px}.brand{font-size:0}.brand small{display:none}.nav button{font-size:0;text-align:center}.nav span{font-size:18px}.main{margin-left:72px;width:calc(100% - 72px)}.stats{grid-template-columns:1fr 1fr}.two,.three{grid-template-columns:1fr}}
+@media(max-width:600px){header{padding:0 14px}.content{padding:16px}.stats{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}}
+body.dark{--bg:#0b1220;--card:#111827;--text:#e5e7eb;--muted:#94a3b8;--border:#263244}body.dark header,body.dark table{background:#111827}body.dark th{background:#172033;color:#cbd5e1}body.dark input,body.dark select,body.dark textarea{background:#0f172a;color:#e5e7eb;border-color:#334155}.print-hide{display:block}@media print{.sidebar,.btn,.nav,header{display:none!important}.main{margin:0;width:100%}.content{padding:0}.page{display:none!important}.page.active{display:block!important}.card{box-shadow:none} }
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">AUTO<span style="color:#a5b4fc">SYS</span><small>Sistem Pengurusan & Automasi</small></div>
+  <nav class="nav">
+    <button class="active" onclick="showPage('dashboard',this)"><span>⌂</span>Dashboard</button>
+    <button onclick="showPage('records',this)"><span>▣</span>Rekod Data</button>
+    <button onclick="showPage('automation',this)"><span>⚙</span>Automasi</button>
+    <button onclick="showPage('reports',this)"><span>▤</span>Laporan</button>
+    <button onclick="showPage('settings',this)"><span>⚙</span>Tetapan</button>
+  </nav>
+</aside>
+<main class="main">
+<header><div class="header-title" id="headerTitle">Dashboard</div><div style="display:flex;gap:10px;align-items:center"><button class="btn light" onclick="toggleTheme()">◐ Tema</button><button class="btn secondary" onclick="window.print()">🖨 Cetak</button><div class="clock" id="clock"></div></div></header>
+<div class="content">
+
+<section id="dashboard" class="page active">
+<h1>Dashboard Sistem</h1><div class="sub">Pusat kawalan untuk data, proses kerja dan automasi.</div>
+<div class="grid stats">
+ <div class="card stat"><div class="label">Jumlah Rekod</div><div class="value" id="kpiTotal">0</div><div class="trend">● Data aktif</div></div>
+ <div class="card stat"><div class="label">Selesai</div><div class="value" id="kpiDone">0</div><div class="trend">● Status selesai</div></div>
+ <div class="card stat"><div class="label">Dalam Proses</div><div class="value" id="kpiProgress">0</div><div class="trend">● Perlu tindakan</div></div>
+ <div class="card stat"><div class="label">Automasi Aktif</div><div class="value" id="kpiAuto">3</div><div class="trend">● Workflow tersedia</div></div>
+</div>
+<br>
+<div class="grid two">
+ <div class="card"><h2>Ringkasan Status</h2><div id="statusChart"></div></div>
+ <div class="card"><h2>Aktiviti Terkini</h2><div id="activity"></div></div>
+</div>
+<br>
+<div class="card"><h2>⚡ Pusat Automasi Pintar</h2><div class="grid three"><div><b>Auto-Validasi</b><p class="kpi">Semak medan wajib secara automatik.</p><button class="btn primary" onclick="runAutomation('validasi')">Jalankan</button></div><div><b>Auto-Kemas Kini</b><p class="kpi">Kemas kini status rekod secara pukal.</p><button class="btn primary" onclick="runAutomation('kemas')">Jalankan</button></div><div><b>Auto-Laporan</b><p class="kpi">Analisis data dan bina ringkasan.</p><button class="btn primary" onclick="runAutomation('laporan')">Jalankan</button></div></div></div><br>
+<div class="card"><h2>Aliran Kerja Sistem</h2><div class="workflow">
+ <div class="step"><b>01 · Input</b>Data diterima daripada borang, CSV atau JSON.</div>
+ <div class="step"><b>02 · Validasi</b>Semakan medan wajib dan status rekod.</div>
+ <div class="step"><b>03 · Automasi</b>Tindakan berdasarkan peraturan workflow.</div>
+ <div class="step"><b>04 · Laporan</b>Ringkasan, penapisan dan eksport.</div>
+</div></div>
+</section>
+
+<section id="records" class="page">
+<h1>Pengurusan Rekod</h1><div class="sub">Tambah, kemas kini, cari, tapis dan eksport data sistem.</div>
+<div class="card">
+<div class="toolbar">
+<input id="search" placeholder="Cari nama, kategori atau status..." oninput="renderTable()">
+<select id="filterStatus" onchange="renderTable()"><option value="">Semua status</option><option>Baru</option><option>Dalam Proses</option><option>Selesai</option><option>Tertangguh</option></select>
+<button class="btn primary" onclick="openModal()">+ Rekod Baharu</button>
+<button class="btn secondary" onclick="exportCSV()">Eksport CSV</button>
+<label class="btn light">Import CSV/JSON <input id="importFile" type="file" accept=".csv,.json" hidden onchange="importData(this)"></label>
+</div>
+<div class="table-wrap"><table><thead><tr><th>ID</th><th>Nama</th><th>Kategori</th><th>Status</th><th>Tarikh</th><th>Pegawai</th><th>Tindakan</th></tr></thead><tbody id="recordBody"></tbody></table></div>
+<div class="footer-note">Data prototaip disimpan dalam localStorage pelayar. Untuk produksi, sambungkan API/database sebenar.</div>
+</div>
+</section>
+
+<section id="automation" class="page">
+<h1>Automasi & Workflow</h1><div class="sub">Urus peraturan automasi yang boleh dijalankan secara manual atau disambungkan ke backend.</div>
+<div class="grid three">
+ <div class="card"><h2>Auto-Validasi</h2><p class="kpi">Semak rekod yang mempunyai medan wajib.</p><button class="btn primary" onclick="runAutomation('validasi')">Jalankan</button></div>
+ <div class="card"><h2>Auto-Kemas Kini</h2><p class="kpi">Tandakan rekod lama sebagai perlu tindakan.</p><button class="btn primary" onclick="runAutomation('kemas')">Jalankan</button></div>
+ <div class="card"><h2>Auto-Laporan</h2><p class="kpi">Jana ringkasan berdasarkan status semasa.</p><button class="btn primary" onclick="runAutomation('laporan')">Jalankan</button></div>
+</div>
+<br>
+<div class="card"><h2>Log Automasi</h2><div id="automationLog" class="empty">Belum ada aktiviti automasi.</div></div>
+</section>
+
+<section id="reports" class="page">
+<h1>Laporan & Analitik</h1><div class="sub">Paparan ringkasan yang boleh digunakan untuk pemantauan dan pembentangan.</div>
+<div class="grid two">
+<div class="card"><h2>Prestasi Mengikut Status</h2><div id="reportBars"></div></div>
+<div class="card"><h2>Ringkasan Sistem</h2><div id="reportSummary"></div></div>
+</div><br>
+<div class="card"><h2>Data Semasa</h2><div class="table-wrap"><table><thead><tr><th>Kategori</th><th>Jumlah</th><th>Peratus</th></tr></thead><tbody id="categoryReport"></tbody></table></div></div>
+</section>
+
+<section id="settings" class="page">
+<h1>Tetapan Sistem</h1><div class="sub">Konfigurasi asas prototaip dan pengurusan data.</div>
+<div class="card">
+<div class="form-grid">
+<div class="field"><label>NAMA SISTEM</label><input id="systemName" value="Sistem Pengurusan & Automasi"></div>
+<div class="field"><label>ORGANISASI</label><input id="orgName" value="Organisasi / Institusi"></div>
+<div class="field full"><label>DESKRIPSI</label><textarea id="systemDesc" rows="3">Prototaip sistem bersepadu dengan modul rekod, automasi dan laporan.</textarea></div>
+</div><br>
+<button class="btn primary" onclick="saveSettings()">Simpan Tetapan</button>
+<button class="btn danger" onclick="resetData()">Reset Data Prototaip</button>
+</div>
+<br>
+<div class="card"><h2>Integrasi Dicadangkan</h2>
+<ul><li>Google Sheets / database SQL sebagai stor data.</li><li>Google Forms atau borang web sebagai input.</li><li>Make/Zapier/n8n/Apps Script untuk automasi luaran.</li><li>API backend untuk autentikasi, peranan pengguna dan audit log.</li></ul>
+</div>
+</section>
+
+</div></main></div>
+
+<div class="modal" id="modal">
+<div class="modal-box"><h2 id="modalTitle">Tambah Rekod</h2>
+<div class="form-grid">
+<div class="field"><label>NAMA *</label><input id="fName"></div>
+<div class="field"><label>KATEGORI</label><input id="fCategory"></div>
+<div class="field"><label>STATUS</label><select id="fStatus"><option>Baru</option><option>Dalam Proses</option><option>Selesai</option><option>Tertangguh</option></select></div>
+<div class="field"><label>TARIKH</label><input id="fDate" type="date"></div>
+<div class="field full"><label>PEGAWAI / PEMILIK</label><input id="fOwner"></div>
+<div class="field full"><label>CATATAN</label><textarea id="fNote" rows="3"></textarea></div>
+</div><br>
+<div style="display:flex;justify-content:flex-end;gap:10px"><button class="btn light" onclick="closeModal()">Batal</button><button class="btn primary" onclick="saveRecord()">Simpan</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='autosys_records_v1', LOG='autosys_logs_v1', SET='autosys_settings_v1';
+let records=JSON.parse(localStorage.getItem(KEY)||'null')||[
+ {id:'R001',name:'Contoh Rekod 1',category:'Umum',status:'Selesai',date:new Date().toISOString().slice(0,10),owner:'Pentadbir',note:''},
+ {id:'R002',name:'Contoh Rekod 2',category:'Operasi',status:'Dalam Proses',date:new Date().toISOString().slice(0,10),owner:'Pegawai',note:''},
+ {id:'R003',name:'Contoh Rekod 3',category:'Dokumen',status:'Baru',date:new Date().toISOString().slice(0,10),owner:'Urusetia',note:''}
+];
+let editingId=null;
+function save(){localStorage.setItem(KEY,JSON.stringify(records));}
+function logs(){return JSON.parse(localStorage.getItem(LOG)||'[]')}
+function addLog(msg){let a=logs();a.unshift({time:new Date().toLocaleString('ms-MY'),msg});localStorage.setItem(LOG,JSON.stringify(a.slice(0,30)));renderLogs();renderActivity()}
+function toast(s){let t=document.getElementById('toast');t.textContent=s;t.style.display='block';setTimeout(()=>t.style.display='none',2400)}
+function showPage(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.getElementById('headerTitle').textContent=btn.textContent.trim();renderAll()}
+function openModal(id=null){editingId=id;document.getElementById('modalTitle').textContent=id?'Kemaskini Rekod':'Tambah Rekod';let r=records.find(x=>x.id===id);document.getElementById('fName').value=r?.name||'';document.getElementById('fCategory').value=r?.category||'';document.getElementById('fStatus').value=r?.status||'Baru';document.getElementById('fDate').value=r?.date||new Date().toISOString().slice(0,10);document.getElementById('fOwner').value=r?.owner||'';document.getElementById('fNote').value=r?.note||'';document.getElementById('modal').classList.add('show')}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+function saveRecord(){let name=document.getElementById('fName').value.trim();if(!name){toast('Nama rekod wajib diisi.');return}
+let obj={id:editingId||('R'+Date.now().toString().slice(-6)),name,category:document.getElementById('fCategory').value.trim()||'Umum',status:document.getElementById('fStatus').value,date:document.getElementById('fDate').value,owner:document.getElementById('fOwner').value.trim()||'-',note:document.getElementById('fNote').value.trim()};
+if(editingId) records=records.map(x=>x.id===editingId?obj:x);else records.push(obj);save();addLog((editingId?'Kemaskini':'Tambah')+' rekod '+obj.id);closeModal();renderAll();toast('Rekod disimpan.')}
+function deleteRecord(id){if(!confirm('Padam rekod ini?'))return;records=records.filter(x=>x.id!==id);save();addLog('Padam rekod '+id);renderAll();toast('Rekod dipadam.')}
+function badge(s){let c=s==='Selesai'?'b-green':s==='Tertangguh'?'b-red':s==='Dalam Proses'?'b-yellow':'b-blue';return `<span class="badge ${c}">${s}</span>`}
+function renderTable(){let q=(document.getElementById('search')?.value||'').toLowerCase(), f=document.getElementById('filterStatus')?.value||'';let a=records.filter(r=>(!q||[r.id,r.name,r.category,r.status,r.owner].join(' ').toLowerCase().includes(q))&&(!f||r.status===f));let b=document.getElementById('recordBody');b.innerHTML=a.length?a.map(r=>`<tr><td>${r.id}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.category)}</td><td>${badge(r.status)}</td><td>${r.date||'-'}</td><td>${esc(r.owner)}</td><td><button class="btn secondary" onclick="openModal('${r.id}')">Edit</button> <button class="btn danger" onclick="deleteRecord('${r.id}')">Padam</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">Tiada rekod ditemui.</td></tr>`}
+function renderDashboard(){let total=records.length, done=records.filter(x=>x.status==='Selesai').length, prog=records.filter(x=>x.status==='Dalam Proses').length;document.getElementById('kpiTotal').textContent=total;document.getElementById('kpiDone').textContent=done;document.getElementById('kpiProgress').textContent=prog;let sts=['Baru','Dalam Proses','Selesai','Tertangguh'];document.getElementById('statusChart').innerHTML=sts.map(s=>{let n=records.filter(x=>x.status===s).length,p=total?Math.round(n/total*100):0;return `<div style="margin:13px 0"><div style="display:flex;justify-content:space-between;font-size:12px"><span>${s}</span><b>${n} (${p}%)</b></div><div class="bar"><i style="width:${p}%"></i></div></div>`}).join('')}
+function renderActivity(){let a=logs().slice(0,6);document.getElementById('activity').innerHTML=a.length?a.map(x=>`<div class="activity"><div class="dot"></div><div><b>${esc(x.msg)}</b><div class="kpi">${x.time}</div></div></div>`).join(''):`<div class="empty">Belum ada aktiviti.</div>`}
+function renderLogs(){let a=logs();document.getElementById('automationLog').innerHTML=a.length?a.map(x=>`<div class="activity"><div class="dot"></div><div>${esc(x.msg)}<div class="kpi">${x.time}</div></div></div>`).join(''):`<div class="empty">Belum ada aktiviti automasi.</div>`}
+function renderReports(){let total=records.length, sts=['Baru','Dalam Proses','Selesai','Tertangguh'];document.getElementById('reportBars').innerHTML=sts.map(s=>{let n=records.filter(x=>x.status===s).length,p=total?Math.round(n/total*100):0;return `<div style="margin:16px 0"><div style="display:flex;justify-content:space-between"><span>${s}</span><b>${p}%</b></div><div class="bar"><i style="width:${p}%"></i></div></div>`}).join('');document.getElementById('reportSummary').innerHTML=`<p><b>${total}</b> jumlah rekod.</p><p><b>${records.filter(x=>x.status==='Selesai').length}</b> rekod selesai.</p><p><b>${records.filter(x=>x.status!=='Selesai').length}</b> rekod masih memerlukan perhatian.</p>`;let cats={};records.forEach(r=>cats[r.category]=(cats[r.category]||0)+1);document.getElementById('categoryReport').innerHTML=Object.entries(cats).map(([c,n])=>`<tr><td>${esc(c)}</td><td>${n}</td><td>${total?Math.round(n/total*100):0}%</td></tr>`).join('')||'<tr><td colspan="3" class="empty">Tiada data.</td></tr>'}
+function runAutomation(type){if(type==='validasi'){let bad=records.filter(r=>!r.name||!r.category||!r.date);addLog('Auto-Validasi selesai: '+bad.length+' rekod perlu semakan.');toast('Auto-Validasi selesai.')}else if(type==='kemas'){let n=records.filter(r=>r.status==='Baru').length;records=records.map(r=>r.status==='Baru'?({...r,status:'Dalam Proses'}):r);save();addLog('Auto-Kemas Kini: '+n+' rekod ditukar kepada Dalam Proses.');toast(n+' rekod dikemas kini.')}else{addLog('Auto-Laporan dijalankan: '+records.length+' rekod dianalisis.');renderReports();toast('Ringkasan laporan dijana.')};renderAll()}
+function exportCSV(){let head=['ID','Nama','Kategori','Status','Tarikh','Pegawai','Catatan'];let rows=records.map(r=>[r.id,r.name,r.category,r.status,r.date,r.owner,r.note]);let csv=[head,...rows].map(a=>a.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\n');let blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='data_sistem.csv';a.click();URL.revokeObjectURL(a.href);addLog('Eksport data CSV.')}
+function importData(input){let f=input.files[0];if(!f)return;let reader=new FileReader();reader.onload=e=>{try{let txt=e.target.result;if(f.name.toLowerCase().endsWith('.json')){let d=JSON.parse(txt);records=Array.isArray(d)?d:d.records}else{let lines=txt.split(/\r?\n/).filter(Boolean), rows=lines.slice(1).map(line=>line.split(',').map(x=>x.replace(/^"|"$/g,'')));records=rows.map((r,i)=>({id:r[0]||'R'+Date.now()+i,name:r[1]||'',category:r[2]||'Umum',status:r[3]||'Baru',date:r[4]||'',owner:r[5]||'-',note:r[6]||''}))}save();addLog('Import data '+f.name);renderAll();toast('Import berjaya.')}catch(err){toast('Fail tidak dapat dibaca.')}};reader.readAsText(f)}
+function saveSettings(){let s={name:document.getElementById('systemName').value,org:document.getElementById('orgName').value,desc:document.getElementById('systemDesc').value};localStorage.setItem(SET,JSON.stringify(s));addLog('Tetapan sistem disimpan.');toast('Tetapan disimpan.')}
+function resetData(){if(!confirm('Reset semua data prototaip?'))return;localStorage.removeItem(KEY);localStorage.removeItem(LOG);location.reload()}
+function toggleTheme(){document.body.classList.toggle('dark');localStorage.setItem('autosys_theme',document.body.classList.contains('dark')?'dark':'light')}
+if(localStorage.getItem('autosys_theme')==='dark')document.body.classList.add('dark')
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function renderAll(){renderTable();renderDashboard();renderActivity();renderLogs();renderReports()}
+function clock(){document.getElementById('clock').textContent=new Date().toLocaleString('ms-MY',{dateStyle:'medium',timeStyle:'medium'})}
+setInterval(clock,1000);clock();renderAll();
+</script>
+</body>
+</html>
